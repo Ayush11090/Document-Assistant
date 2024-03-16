@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat with Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add any custom CSS styles here -->
+    <style>
+        /* Add your custom styles for the chat interface here */
+        
+        body {
+            background-color: #183b54;
+            width: 100%;
+        }
+        
+        .container {
+            margin-top: 23px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 95vh;
+            overflow: hidden;
+            background-color: rgb(148, 200, 218);
+            border: 2px solid #0a3b4a; /* Modified border */
+            color: black;
+            border-radius: 10px; /* Adjusted border radius */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Added box shadow for depth */
+        }
+        
+        #chat-container {
+            width: 100%;
+            height: 85vh;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: rgb(219, 248, 251);
+            color: black;
+        }
+        
+        .message {
+            display: flex;
+            align-items: left;
+            margin-bottom: 10px;
+        }
+        
+        .message img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+        
+        .user-message {
+            justify-content: flex-start;
+        }
+        
+        .spacer {
+            height: 5px;
+        }
+        
+        #chat-form {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            font: 24px;
+            margin-bottom: 20px;
+        }
+        
+        #user_question {
+            height: 60px;
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 24px;
+        }
+        
+        button[type="submit"] {
+            font-size: 24px;
+            height: 60px;
+            padding: 10px 20px;
+            border: none;
+            margin-left: 8px;
+            background-color: #0a3b4a; /* Adjusted button background color */
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #microphone-icon {
+            width: 60px;
+            height: 60px;
+            margin-left: 8px;
+            background-image: url('https://img.freepik.com/free-vector/realistic-single-silver-microphone-retro-design-with-black-switch_1284-33542.jpg?size=626&ext=jpg&ga=GA1.1.422729055.1709922313&semt=sph'); /* Add your image URL */
+            background-size: cover;
+            border: none;
+            border-radius: 80px;
+            cursor: pointer;
+        }
+      
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color: #fff; font-size: 48px; text-align: center; margin-bottom: 30px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">IntelliDocs <span style="color: #ffcc00;">ChatHub</span></h1>
+
+        <div id="chat-container">
+{% for message in chat_history %}
+    {% if loop.index0 % 2 == 0 %}
+        <div class="message user-message" style="background-color: white; padding: 10px;font-size: 24px;">
+            <img src="https://uxwing.com/wp-content/themes/uxwing/download/business-professional-services/computer-user-icon.png" alt="User">
+            {{ message.content }}
+        </div>
+    {% else %}
+        <div class="message bot-message" style="background-color:rgb(72, 94, 124) ; padding: 10px;font-size: 24px;color:white;">
+            <img src="https://www.cambridge.org/elt/blog/wp-content/uploads/2020/08/GettyImages-1221348467-e1597069527719.jpg" alt="Bot">
+            {{ message.content }}
+        </div>
+    {% endif %}
+    <div class="spacer" style="height: 10px;"></div> <!-- Add this line for spacing -->
+{% endfor %}
+
+            
+        </div>
+        
+        <form id="chat-form" action="/chat" method="POST">
+            <input type="text" id="user_question" name="user_question" placeholder="Type your question here..." required>
+            <button type="submit">Send</button>
+            <button type="button" id="microphone-icon">&#128247;</button> <!-- Microphone icon -->
+        </form>
+        
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Scroll to the bottom of the chat container
+            var chatContainer = document.getElementById("chat-container");
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Make the scrollbar invisible
+            chatContainer.style.scrollbarWidth = "none";
+
+            // Initialize SpeechRecognition object
+            var recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = "en-US";
+
+            // Handle speech recognition results
+            recognition.onresult = function(event) {
+                var transcript = event.results[0][0].transcript;
+                document.getElementById("user_question").value = transcript;
+            };
+
+            // Start speech recognition when the user clicks the microphone icon
+            document.getElementById("microphone-icon").addEventListener("click", function() {
+                recognition.start();
+            });
+        });
+    </script>
+</body>
+</html>
